@@ -41,6 +41,24 @@ const run = async () => {
             res.json(result)
         })
 
+
+        app.get('/facilities/user/:userId', async (req, res) => {
+            const id = req.params.userId
+            console.log(id)
+            const user = await facilitiesCollection.find({ userId: id }).toArray()
+            res.send(user)
+        })
+
+        app.patch('/facilities/user/:userId', async (req, res) => {
+            const { userId } = req.params
+            const updatedData = req.body
+            const result = await facilitiesCollection.updateOne(
+                { userId },
+                { $set: updatedData }
+            )
+            res.json(result)
+        })
+
         app.get('/bookings/:userEmail', async (req, res) => {
             const { userEmail } = req.params
             const result = await bookingCollection.find({ user_email: userEmail }).toArray()
