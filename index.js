@@ -34,6 +34,13 @@ const run = async () => {
             res.send(user)
         })
 
+        app.post('/facilities', async (req, res) => {
+            const facilitiesData = req.body
+            const result = await facilitiesCollection.insertOne(facilitiesData)
+            console.log(result)
+            res.json(result)
+        })
+
         app.get('/bookings/:userEmail', async (req, res) => {
             const { userEmail } = req.params
             const result = await bookingCollection.find({ user_email: userEmail }).toArray()
