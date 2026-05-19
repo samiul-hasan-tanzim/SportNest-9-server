@@ -36,7 +36,6 @@ const run = async () => {
 
         app.get('/bookings/:userEmail', async (req, res) => {
             const { userEmail } = req.params
-            // console.log(id)
             const result = await bookingCollection.find({ user_email: userEmail }).toArray()
             res.json(result)
         })
@@ -44,6 +43,12 @@ const run = async () => {
         app.post('/bookings', async (req, res) => {
             const bookingData = req.body
             const result = await bookingCollection.insertOne(bookingData)
+            res.json(result)
+        })
+
+        app.delete('/bookings/:bookingId', async (req, res) => {
+            const bookingId = req.params.bookingId
+            const result = await bookingCollection.deleteOne({ _id: new ObjectId(bookingId) })
             res.json(result)
         })
 
