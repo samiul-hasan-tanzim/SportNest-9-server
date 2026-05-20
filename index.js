@@ -59,6 +59,13 @@ const run = async () => {
             res.json(result)
         })
 
+        //New
+        app.delete('/facilities/:userId', async (req, res) => {
+            const { userId } = req.params
+            const result = await facilitiesCollection.deleteOne({ userId })
+            res.json(result)
+        })
+
         app.get('/bookings/:userEmail', async (req, res) => {
             const { userEmail } = req.params
             const result = await bookingCollection.find({ user_email: userEmail }).toArray()
