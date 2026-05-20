@@ -24,10 +24,36 @@ const run = async () => {
         const bookingCollection = database.collection(process.env.ALL_BOOKING)
 
         app.get('/facilities', async (req, res) => {
-            const cursor = facilitiesCollection.find()
+            const { search } = req.query
+            let cursor
+
+            if (search) {
+                cursor = facilitiesCollection.find({
+                    $or: [
+                        {
+                            name: {
+                                $regex: search,
+                                $options: 'i'
+                            }
+                        },
+                        {
+                            facility_type: {
+                                $regex: search,
+                                $options: 'i'
+                            }
+                        }
+                    ]
+                })
+            }
+            else {
+                cursor = facilitiesCollection.find()
+            }
+
             const result = await cursor.toArray()
+            console.log(result)
             res.send(result)
         })
+
         app.get('/facilities/:id', async (req, res) => {
             const id = req.params.id
             const user = await facilitiesCollection.findOne({ _id: new ObjectId(id) })
@@ -59,7 +85,6 @@ const run = async () => {
             res.json(result)
         })
 
-        //New
         app.delete('/facilities/:userId', async (req, res) => {
             const { userId } = req.params
             const result = await facilitiesCollection.deleteOne({ userId })
