@@ -55,7 +55,38 @@ const run = async () => {
             const { search, type } = req.query
             let cursor
 
-            if (search) {
+            if (search && type) {
+
+                cursor = facilitiesCollection.find({
+                    $and: [
+                        {
+                            $or: [
+                                {
+                                    name: {
+                                        $regex: search,
+                                        $options: 'i'
+                                    }
+                                },
+                                {
+                                    facility_type: {
+                                        $regex: search,
+                                        $options: 'i'
+                                    }
+                                }
+                            ]
+                        },
+
+                        {
+                            facility_type: {
+                                $in: [type]
+                            }
+                        }
+                    ]
+                })
+
+            }
+
+            else if (search) {
                 cursor = facilitiesCollection.find({
                     $or: [
                         {
@@ -81,7 +112,6 @@ const run = async () => {
                     }
                 })
             }
-
 
             else {
                 cursor = facilitiesCollection.find()
