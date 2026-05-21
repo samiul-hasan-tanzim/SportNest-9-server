@@ -36,7 +36,7 @@ const verifyToken = async (req, res, next) => {
 
     try {
         const { payload } = await jwtVerify(token, JWKS)
-        console.log(payload)
+        // console.log(payload)
         next()
     } catch (error) {
         res.status(401).json({ message: "Forbidden" })
@@ -50,8 +50,9 @@ const run = async () => {
         const facilitiesCollection = database.collection(process.env.ALL_COLLECTION);
         const bookingCollection = database.collection(process.env.ALL_BOOKING)
 
-        app.get('/facilities', verifyToken, async (req, res) => {
-            const { search } = req.query
+        app.get('/facilities', async (req, res) => {
+            console.log(req.query)
+            const { search, type } = req.query
             let cursor
 
             if (search) {
@@ -72,6 +73,16 @@ const run = async () => {
                     ]
                 })
             }
+
+            else if (type) {
+                cursor = facilitiesCollection.find({
+                    facility_type: {
+                        $in: [type]
+                    }
+                })
+            }
+
+
             else {
                 cursor = facilitiesCollection.find()
             }
