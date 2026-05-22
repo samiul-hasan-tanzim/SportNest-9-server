@@ -26,12 +26,12 @@ const JWKS = createRemoteJWKSet(
 const verifyToken = async (req, res, next) => {
     const header = req?.headers.authorization
     if (!header) {
-        res.status(401).json({ message: "Unauthorized" })
+        return res.status(401).json({ message: "Unauthorized" })
     }
     const token = header.split(' ')[1]
 
     if (!token) {
-        res.status(401).json({ message: "Unauthorized" })
+        return res.status(401).json({ message: "Unauthorized" })
     }
 
     try {
@@ -39,7 +39,7 @@ const verifyToken = async (req, res, next) => {
         // console.log(payload)
         next()
     } catch (error) {
-        res.status(401).json({ message: "Forbidden" })
+        return res.status(401).json({ message: "Forbidden" })
     }
 }
 
@@ -153,6 +153,11 @@ const run = async () => {
         app.delete('/facilities/:userId', verifyToken, async (req, res) => {
             const { userId } = req.params
             const result = await facilitiesCollection.deleteOne({ userId })
+            res.json(result)
+        })
+
+        app.get('/bookings', verifyToken, async (req, res) => {
+            const result = await bookingCollection.find().toArray()
             res.json(result)
         })
 
